@@ -67,12 +67,12 @@ int main(int argc, char* argv[])
 		while(runs>0)
 		{
 			//Child revieves message from parent
-			read(sendPipe[READ], readBuff, sizeof(readBuff));
+			read(sendPipe[READ], readBuff, size);
 			
 			//printf("Child recieved parent msg: %s\n",readBuff);
 			
 			//Child sends reply to parent
-			write(ackPipe[WRITE], msg, strlen(msg)+1);
+			write(ackPipe[WRITE], msg, size);
 		
 			runs--;
 		}
@@ -91,9 +91,9 @@ int main(int argc, char* argv[])
 			//a=rdtsc();	
 
 			//Parent sends message to child
-			write(sendPipe[WRITE], msg, strlen(msg)+1);
+			write(sendPipe[WRITE], msg, size);
 			//Parent recieves message from child
-			read(ackPipe[READ], readBuff, sizeof(readBuff));
+			read(ackPipe[READ], readBuff, size);
 
 
 			//stop timer
@@ -105,8 +105,8 @@ int main(int argc, char* argv[])
 			diffNS = 1e9L * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
 			//double diffNS= (double) (1e9*( 1.0*(b-a)/rdtsFreq) );
 
-			printf("Parent recieved reply: %s\n",readBuff);	
-			printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diffNS);
+			//printf("Parent recieved reply: %s\n",readBuff);	
+			//printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diffNS);
 
 			if(minNS>diffNS)
 				minNS=diffNS;
