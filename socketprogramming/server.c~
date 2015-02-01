@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     printf("\nSize = %d ",size);
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
-		//setsockopt(listenfd,SOL_TCP,TCP_NODELAY,&delay,sizeof(delay));
+		setsockopt(listenfd,SOL_TCP,TCP_NODELAY,&delay,sizeof(delay));
 		
     memset(&serv_addr, '0', sizeof(serv_addr));
     memset(buf,'0',sizeof(char)*size);

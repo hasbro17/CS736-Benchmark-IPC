@@ -41,8 +41,9 @@ int main(int argc, char *argv[])
 		printf("\n Error : Could not create socket \n");
 		return 1;
 	}
-		
-	setsockopt(sockfd,SOL_TCP,TCP_NODELAY,&delay,sizeof(delay));
+	
+	
+	//setsockopt(sockfd,SOL_TCP,TCP_NODELAY,&delay,sizeof(delay));
 	
 	memset(&serv_addr, '0', sizeof(serv_addr)); 
 	
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
 			minNS=diffNS;
 	}
 	
-	printf("\nMin elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS);
+	printf("Min elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS);
 	
 	return 0;
 }
