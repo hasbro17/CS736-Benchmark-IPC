@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 			minNS=diffNS;
 	}
 	
-	printf("\nMin elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS);
+	printf("\nMin elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS/2);
 	
 	return 0;
 }

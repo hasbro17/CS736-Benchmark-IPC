@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 			runs--;
 		}
 		
-		printf("Min elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS);
+		printf("Min elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS/2);
 
 	}
 
