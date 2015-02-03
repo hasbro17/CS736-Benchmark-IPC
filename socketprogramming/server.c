@@ -12,18 +12,22 @@
 
 int main(int argc, char *argv[])
 {
-    if(argc != 4){
-	printf("\nUsage: ./server <port_number> <rounds> <size of buffer in bytes>");
+    if(argc != 5){
+	printf("\nUsage: ./server <port_number> <rounds> <size of buffer in bytes> <testcase_rounds>");
 	return 0;
     }
 
-    int listenfd = 0, connfd = 0, count = 0, delay =1;
+    int listenfd = 0, connfd = 0, count = 0, delay =1,trounds;
     int rounds = atoi(argv[2]);
     int size = atoi(argv[3]);
+		int tsize = atoi(argv[4]);
+
+		trounds = rounds;
 
     struct sockaddr_in serv_addr; 
 
     char *buf = (char*)malloc(sizeof(char)*size);
+		char *ack = (char*)malloc(sizeof(char)*4);
 		
 		printf("\nPort number = %s",argv[1]);
     printf("\nNumber of rounds = %d ",rounds);
@@ -34,6 +38,7 @@ int main(int argc, char *argv[])
 		
     memset(&serv_addr, '0', sizeof(serv_addr));
     memset(buf,'0',sizeof(char)*size);
+		memset(ack,'0',sizeof(char)*4);
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -45,17 +50,22 @@ int main(int argc, char *argv[])
 
     connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
 
-    while(rounds--){
+		while(--tsize){
+			
+			while(--trounds){
+				
+				read(connfd,buf,size);
+				
+				//printf("\nReceived: %d",count++);
+				//snprintf(buf,1024,"%d",count+2);
+				
+			}
+			
+			//send the 4 byte ack
+			write(connfd, ack, 4);
 
-    read(connfd,buf,size);
-
-    //printf("\nReceived: %d",count++);
-    //snprintf(buf,1024,"%d",count+2);
-
-    write(connfd, buf, size);
-    
-
-    }
+			trounds = rounds;
+		}
 
     close(connfd);
 

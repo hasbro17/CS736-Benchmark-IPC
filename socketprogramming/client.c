@@ -15,24 +15,29 @@
 
 int main(int argc, char *argv[])
 {
-	int sockfd = 0, count = 0, rounds = 0, size=0,delay=1;
-	char *buf;
+	int sockfd = 0, count = 0, rounds = 0, size=0, delay=1, tcase=0, trounds=0;
+	char *buf,*ack;
 	struct sockaddr_in serv_addr; 
 	
 	uint64_t diffNS,minNS;//in nano seconds
 	minNS=MAX_uint64;
 	struct timespec start, end;
 	
-	if(argc != 5){
-		printf("\n Usage: %s <ip of server> <port number> <rounds> <size>\n",argv[0]);
+	if(argc != 6){
+		printf("\n Usage: %s <ip of server> <port number> <rounds> <size> <tcase_size>\n",argv[0]);
 		return 1;
 	} 
 	
 	rounds = atoi(argv[3]);
 	size = atoi(argv[4]);
+	tcase = atoi(argv[5]);
+	trounds = rounds;
 	
 	buf = (char*)malloc(sizeof(char)*size);
+	ack = (char*)malloc(sizeof(char)*4);
+	
 	memset(buf,'0',sizeof(char)*size);
+	memset(ack,'0',sizeof(char)*4);
 	
 	printf("\nRound = %d",rounds);
 	printf("\nSize = %d",size);
@@ -58,29 +63,30 @@ int main(int argc, char *argv[])
 		printf("\n Error : Connect Failed \n");
 		return 1;
 	} 
-	
-	while(rounds--){
-		
-		//snprintf(buf,1024,"%d",count);
-		count++;
-		
+
+	while(--tcase){
 		clock_gettime(CLOCK_MONOTONIC, &start);
+	
+		while(--trounds){
 		
-		write(sockfd, buf, size);
-		
+			//write the data to the server
+			write(sockfd, buf, size);
+		}
+
+		//get the ack
 		read(sockfd, buf, size);
 		
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		
+	
 		diffNS = 1e9L * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-			
-		//printf("\n Server msg: %d",count);
-		
-		if(minNS>diffNS)
-			minNS=diffNS;
+
+		trounds = rounds;
+
+		if(diffNS<minNS)
+			minNS = diffNS;
 	}
 	
-	printf("\nMin elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS/2);
+	printf("\nMin elapsed time = %llu nanoseconds\n", (long long unsigned int) minNS);
 	
 	return 0;
 }
