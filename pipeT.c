@@ -23,12 +23,15 @@ int main(int argc, char* argv[])
 
 	long totalSize=atol(argv[1]);
 	int size=atoi(argv[2]);
+	int rounds,truns;
+		
 	char* msg= (char*) malloc(size);
 	memset(msg, '0', size);
 	char readBuff[size];
 	char ack='a';
 	
 	int runs= totalSize/size;
+	truns = runs;
 	int tempruns=runs;
 
 	//Timer variables
@@ -67,51 +70,52 @@ int main(int argc, char* argv[])
 		//Child closes unnecessary ends
 		close(sendPipe[WRITE]);
 		close(ackPipe[READ]);
-
-		while(runs>0)
-		{
+		
+		while(truns>0){
 			//Child revieves message from parent
 			read(sendPipe[READ], readBuff, size);
 			
 			//printf("Child recieved parent msg: %s\n",readBuff);
-			runs--;
+			--truns;
 		}
-
+		
+		truns = runs;
+		
 		//Child sends reply to parent
 		write(ackPipe[WRITE], ack, sizeof(ack));
-
+		
 	}
 	else
 	{
 		//Parent closes unnecessary ends
 		close(sendPipe[READ]);
 		close(ackPipe[WRITE]);
-
+		
 		//start timer
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		//a=rdtsc();	
-
-		while(runs>0)
-		{
+		
+		while(truns>0){
 			//Parent sends message to child
 			write(sendPipe[WRITE], msg, size);
-			runs--;	
+			--truns;	
 		}
+		truns = runs;
+		
 		//Parent recieves ack from child
 		read(ackPipe[READ], readBuff, size);
-
+		
 		//stop timer
 		clock_gettime(CLOCK_MONOTONIC, &end);
 		//b=rdtsc();
-	
-	
+		
 		//calculate difference	
 		diffNS = 1e9L * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-			//double diffNS= (double) (1e9*( 1.0*(b-a)/rdtsFreq) );
-
-			//printf("Parent recieved reply: %s\n",readBuff);	
-			//printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diffNS);
-		printf("Throughput for %d packets: %llu nanoseconds\n", tempruns, (long long unsigned int) minNS/2);
+		//double diffNS= (double) (1e9*( 1.0*(b-a)/rdtsFreq) );
+		
+		//printf("Parent recieved reply: %s\n",readBuff);	
+		//printf("elapsed time = %llu nanoseconds\n", (long long unsigned int) diffNS);
+		printf("Throughput for %d packets: %llu nanoseconds\n", tempruns, (long long unsigned int) diffNS);
 
 	}
 
