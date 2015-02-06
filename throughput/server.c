@@ -13,23 +13,21 @@
 int main(int argc, char *argv[])
 {
     if(argc != 4){
-	printf("\nUsage: ./server <port_number> <rounds> <size of buffer in bytes>\n");
-	return 0;
+		 printf("\nUsage: ./server <port_number> <rounds> <size of buffer in MB>");
+		 return 0;
     }
 
-    int listenfd = 0, connfd = 0, count = 0, delay =1,trounds;
+    int listenfd = 0, connfd = 0, count = 0, delay =1;
     int rounds = atoi(argv[2]);
-    int size = atoi(argv[3]);
+    int size = atoi(argv[3])*1024*1024;
 	 int fsize = 0;
-	 
-	 trounds = rounds;
 	 
     struct sockaddr_in serv_addr; 
 	 
     char *buf = (char*)malloc(sizeof(char)*size);
 	 char *ack = (char*)malloc(sizeof(char)*4);
 	 
-	 printf("\nPort number = %s",argv[1]);
+    printf("\nPort number = %s",argv[1]);
     printf("\nNumber of rounds = %d ",rounds);
     printf("\nSize = %d ",size);
 
@@ -38,7 +36,7 @@ int main(int argc, char *argv[])
 		
     memset(&serv_addr, '0', sizeof(serv_addr));
     memset(buf,'0',sizeof(char)*size);
-	 memset(ack,'0',sizeof(char)*4);
+    memset(ack,'0',sizeof(char)*4);
 		
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -50,20 +48,22 @@ int main(int argc, char *argv[])
 
     connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
 
-	 //while(rounds--){
-			 
+	 while(rounds--){
+
+		 printf("\nBefore read");
 		 fsize = read(connfd,buf,size);
-		 //printf("\nReading the data");
+		 printf("\nReading the data");
 
 		 if(fsize == size){
-			 
-			 write(connfd, ack, 4);
-			 //printf("\nWriting the data after receiving size = %d",fsize);
-		 }
 
-		 //}
+			 printf("\nBefore write");
+			 write(connfd, ack, 4);
+			 printf("\nWriting the data after receiving size = %d",fsize);
+		}
+		 
+	 }
 	 
-    close(connfd);
+    //close(connfd);
 	 
     return 0;
 }

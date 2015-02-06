@@ -101,11 +101,8 @@ int main(int argc, char* argv[])
 	ftruncate(shm, sizeof(SemPair));
 	sem=mmap(NULL, sizeof(SemPair), PROT_READ | PROT_WRITE, MAP_SHARED, shm, 0);
 
-
 	sem_init(&(sem->empty), 1, buffSize);
 	sem_init(&(sem->full), 1, 0);
-
-
 
 	fd=open("sharedFile", O_RDWR | O_CREAT, S_IRWXU);
 	ftruncate(fd, buffSize);

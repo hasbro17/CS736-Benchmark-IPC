@@ -1,0 +1,42 @@
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<stdio.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<string.h>
+#include<unistd.h>
+
+int main()
+{
+	int a,sersock,newsock,n,port,size;
+	char *str,*str2;
+	struct sockaddr_in seraddr;
+	struct sockaddr_in cliinfo;
+	socklen_t csize=sizeof(cliinfo);
+
+	port = argv[1];
+	size = argv[2];
+	
+	str = (char*)malloc(sizeof(int)*argv[2]);
+	str2 = (char*)malloc(sizeof(int)*argv[2]);
+	
+	seraddr.sin_family=AF_INET;
+	seraddr.sin_port=htons(port);
+	seraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+	if((sersock=socket(AF_INET,SOCK_STREAM,0))<0)
+		{
+			error("\n socket");
+			exit(0);
+		}
+	if(bind(sersock,(struct sockaddr *)&seraddr,sizeof(seraddr))<0)
+		{
+			error("\nBIND");
+			exit(0);
+		}
+	if(listen(sersock,1)<0)
+		{
+			error("\n LISTEN");
+		}
+	if((newsock=accept(sersock,(struct sockaddr *)&cliinfo,&csize))<0)
+		{
+			e
